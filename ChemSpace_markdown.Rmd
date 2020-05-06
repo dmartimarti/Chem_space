@@ -82,7 +82,7 @@ head(test2)
 And let's plot it in 3D with Plotly:
 
 ```{r}
-fig <- plot_ly(data = test2, x = ~V1, y = ~V2, z = ~V3, text = rownames(test2), 
+fig = plot_ly(data = test2, x = ~V1, y = ~V2, z = ~V3, text = rownames(test2), 
                color = ~Category, colors = c('#FF0900', '#B8B8B8'),
                marker = list(size = 3))
 fig
@@ -169,7 +169,7 @@ test2 = test2 %>%
          Category = as.factor(Category)) 
 
 
-fig <- plot_ly(data = test2,  x = ~Dim1, y = ~Dim2, z = ~Dim3, text = test2$Drugbank, 
+fig = plot_ly(data = test2,  x = ~Dim1, y = ~Dim2, z = ~Dim3, text = test2$Drugbank, 
                color = ~Category, colors = c('#FF0900', '#B8B8B8'),
                marker = list(size = 3))
 fig
@@ -177,6 +177,85 @@ fig
 
 
 Notice that I was removing **Tanic Acid** from the plot because it's a super different compound that gets extremely separated from the rest. In any case, there is a major difference between this plot and the previous one because the cloud of points have a different shape. I don't think this is very important, but we need to have this in mind. 
+
+# t-SNE representation
+
+PCA is a good method to reduce the dimensionality, but it's showing some weird results compared to the original publication. Before testing more things with the PCA parameters and transformations, let's give it a try with the t-SNE method, which in theory is more robust to show non-linear dependencies and better clusters than a PCA. 
+
+```{r}
+
+library(Rtsne)
+
+mat.tsne = complete %>% 
+  select(Number_of_aliphatic_carboxylic_acids:Number_of_urea_groups) %>% as.matrix
+rownames(mat.tsne) = complete %>% 
+  select(GENERIC_NAME) %>% t %>% as.character
+```
+
+This time we have not removed Tanic Acid, so let's see what happens with the clustering. First of all, let's run the tsne method. If you want to know more about the paramters, especially the `perplexity` parameter, go to this [website](https://distill.pub/2016/misread-tsne/) and play with the examples. 
+The code might take a while. If you are running in a slower computer, reduce the `max_iter` parameter to 1000. 
+
+```{r}
+
+tsne = Rtsne(mat.tsne, check_duplicates = FALSE, pca = FALSE, num_threads = 12,
+             normalize = FALSE, max_iter = 5000,
+             perplexity = 40, theta = 0.2, dims = 3) 
+```
+
+And let's plot what we have doing the proper data transformations:
+
+```{r warning=FALSE, message=FALSE}
+# generate data frame from tnse results
+tsne.df = data.frame(tsne$Y)
+colnames(tsne.df) = c('Dim1', 'Dim2', 'Dim3')
+
+tsne.df['Drugbank'] = complete %>% 
+  # filter(GENERIC_NAME != 'Tannic acid') %>% 
+  select(GENERIC_NAME) %>% t %>% as.character
+
+tsne.df = tsne.df %>%
+  mutate(biolog = ifelse(Drugbank %in% drugs, Drugbank, NA),
+         Category = ifelse(Drugbank %in% drugs, 'Biolog', 'Drugbank'),
+         Opacity = ifelse(Category == 'Biolog', 1, 0.1),
+         Opacity = as.numeric(Opacity),
+         Category = as.factor(Category)) 
+
+
+fig = plot_ly(data = tsne.df,  x = ~Dim1, y = ~Dim2, z = ~Dim3, text = tsne.df$Drugbank, 
+               color = ~Category, colors = c('#FF0900', '#B8B8B8'),
+               marker = list(size = 4))
+fig
+```
+
+Good! It's much nicer than the PCA in my opinion. But there's still the detail of the opacity for the grey points. I haven't got a proper way to make it work with values within the dataframe, but we can make a slightly more convoluted code to plot it in a nicer way.
+
+```{r message=FALSE, warning=FALSE}
+# let's try to modify the opacity of grey points
+fig = plot_ly()
+
+fig = fig %>%
+  add_trace(
+    data = tsne.df %>% filter(Category == 'Drugbank'),
+    name = 'Drugbank',
+    x = ~Dim1, y = ~Dim2, z = ~Dim3, text = tsne.df[tsne.df$Category == 'Drugbank',]$Drugbank, 
+    marker = list(
+      color = '#B8B8B8', 
+      opacity = 0.4, # OPACITY
+      size = 4)
+    )
+
+fig = fig %>%
+  add_trace(
+    data = tsne.df %>% filter(Category == 'Biolog'),
+    name = 'Biolog',
+    x = ~Dim1, y = ~Dim2, z = ~Dim3, text = tsne.df[tsne.df$Category == 'Biolog',]$Drugbank, 
+    marker = list(
+      color = '#FF0900', 
+      size = 4)
+  )
+fig
+
+```
 
 
 <br><br><br>
