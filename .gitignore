@@ -13,3 +13,5 @@ __packages
 # other folders
 ./Data_drug_bacteria_gene_mapping
 ./zimmerman_code_MATLAB
+zimmermann2019.pdf
+pub_find_chemical_functional_groups.py
