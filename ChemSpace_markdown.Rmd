@@ -1,0 +1,190 @@
+---
+title: "ChemSpace"
+author: "Daniel Martinez"
+date: "06/05/2020"
+output: html_document
+
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse) # master library to deal with data frames
+library(readxl) # read xlsx or xls files
+library(ggrepel) # ggplot add-on, to plot names that don't collapse in same position
+library(FactoMineR) # for PCA
+library(factoextra) # for PCA
+library(here) # usefull to save plots in folders given a root
+library(viridis) # color palette package
+# library(ComplexHeatmap) # yeah, complex heatmaps
+library(plotly)
+```
+
+
+
+## Some tests with 3D PCA plots and drugbank database
+
+I've downloaded the files from the Zimmermann paper from Nature, 2019. They have a big database of 2099 compounds from drugbank to which they run a Python script to extract the *chemical fingerprints*, using them to represent the chemical space via a PCA. 
+
+```{r message=FALSE, warning=FALSE}
+# biolog metabolites
+biolog = read_csv('Biolog_metabolites.csv')
+
+# drugbank coordinates
+drugbank.coord = read.delim('.\\Data_drug_bacteria_gene_mapping\\Input\\drugbank_pca.txt', header = FALSE)
+drugbank = read_csv('.\\Data_drug_bacteria_gene_mapping\\Input\\drugbank_approved_MW_150_1000_functional_groups_all.csv') %>% select(-Number_of_carboxylic_acids_1)
+
+# plates to use from Biolog
+plates = c("PM11C", "PM12B", "PM13B", "PM14A", "PM15B", "PM16A", "PM17A", "PM18C", "PM19" , "PM20B")
+biolog.drug = biolog %>% filter(Plate %in% plates)
+# list of drugs present in biolog plates
+drugs = biolog.drug %>% select(Metabolite) %>% unique %>% t %>% as.character
+```
+
+Just a glimpse of the drug names:
+
+```{r}
+head(drugs)
+```
+
+And a glimpse of the huge data table from the paper:
+
+```{r}
+head(drugbank)
+```
+
+Doing some data transformations (including the names of biolog compounds and that into the huge data table), we notice one important thing: only ~70 compounds from biolog are in the original data table. Anyway, it's a good practice to see if our drugs are *occupying* enough of the drug space.
+
+```{r}
+
+drugbank.coord['Drugbank'] = drugbank$GENERIC_NAME
+
+# create a new variable, just in case
+test2 = drugbank.coord
+# data transformation, create Category with Biolog (if the compound is Drugbank) and Drugbank (if not)
+test2 = test2 %>%
+  mutate(biolog = ifelse(Drugbank %in% drugs, Drugbank, NA),
+         Category = ifelse(Drugbank %in% drugs, 'Biolog', 'Drugbank'),
+         Category = as.factor(Category)) 
+
+rownames(test2) = test2$Drugbank
+
+head(test2)
+```
+
+And let's plot it in 3D with Plotly:
+
+```{r}
+fig <- plot_ly(data = test2, x = ~V1, y = ~V2, z = ~V3, text = rownames(test2), 
+               color = ~Category, colors = c('#FF0900', '#B8B8B8'),
+               marker = list(size = 3))
+fig
+
+```
+
+
+In order to try to complete our dataset with more drugs, I've extracted the KEGG IDs from the biolog table, passed them into a website that converts them into PubChem IDs, and got the chemical fingerprints using an adapted version of the Python script available at their GitHub repository. 
+
+```{r message=FALSE, warning=FALSE}
+# first, separate KEGG ids to generate a new column to the biolog data frame with pubchem ids
+kegg_ids = biolog %>%
+  select(KEGG_ID) %>% t %>% as.character %>% unique 
+# remove NAs
+kegg_ids = kegg_ids[complete.cases(kegg_ids)]
+# write list of genes
+write.table(kegg_ids, 'KEGG_IDs_biolog.txt', quote = F, col.names = F, row.names = F)
+## go here to convert: http://csbg.cnb.csic.es/mbrole/conversion.jsp
+
+# read generated list and merge with biolog
+kegg2pub =  read.csv("D:/MRC_Postdoc/Pangenomic/Chem_space/KEGG2PubChemIDs.txt")
+biolog = biolog %>% left_join(kegg2pub)
+
+
+### let's get the missing drugs (as many as we can, at least)
+missing = drugs[!drugs %in% unique(drugbank$GENERIC_NAME)]
+
+drugs_missing = biolog %>%
+  filter(Metabolite %in% missing) %>%
+  select(PubChem_ID) %>% t %>% as.character %>% unique 
+# remove NAs
+drugs_missing = drugs_missing[complete.cases(drugs_missing)]
+write.table(drugs_missing, 'PubChem_ID_missing_metabolites.txt', quote = F, col.names = F, row.names = F)
+
+
+# after downloading them from pubchem, the file is named as: Metab_structures_missing_biolog.sdf
+
+# file with chem fingerprints from pubchem compounds (~100 more, not bad)
+biolog_metabolites_PubChem = read_csv("biolog_metabolites_PubChem.csv") %>% select(-X1, -index, -Number_of_carboxylic_acids_1, -ID) %>%
+  rename(PubChem_ID = PUBCHEM_COMPOUND_CID) 
+
+
+dummy = biolog %>%
+  filter(Metabolite %in% missing) %>%
+  select(Metabolite, PubChem_ID) %>% unique
+
+biolog_metabolites_PubChem = biolog_metabolites_PubChem %>% left_join(dummy, by = 'PubChem_ID') %>%
+  select(PubChem_ID, Metabolite, everything()) %>% rename(GENERIC_NAME = Metabolite)
+
+
+# bind rows
+complete = bind_rows(drugbank, biolog_metabolites_PubChem)
+
+# save data table into csv
+write.csv(complete, 'Complete_chem_fingerprints.csv')
+```
+
+
+Do the PCA: 
+
+```{r}
+mat = complete %>% 
+  filter(GENERIC_NAME != 'Tannic acid') %>%
+  select(Number_of_aliphatic_carboxylic_acids:Number_of_urea_groups) %>% as.matrix
+rownames(mat) = complete %>% filter(GENERIC_NAME != 'Tannic acid') %>% select(GENERIC_NAME) %>% t %>% as.character
+
+
+res.pca = PCA((mat), scale.unit = TRUE, ncp = 5, graph = F)
+ind = get_pca_ind(res.pca)
+ind_df = data.frame(ind$coord[,1], ind$coord[,2], ind$coord[,3])
+colnames(ind_df) = c('Dim1', 'Dim2', 'Dim3')
+```
+
+
+And now, plot again:
+
+```{r}
+test2 = ind_df %>% tibble 
+test2['Drugbank'] = complete %>% filter(GENERIC_NAME != 'Tannic acid') %>% select(GENERIC_NAME) %>% t %>% as.character
+
+test2 = test2 %>%
+  mutate(biolog = ifelse(Drugbank %in% drugs, Drugbank, NA),
+         Category = ifelse(Drugbank %in% drugs, 'Biolog', 'Drugbank'),
+         Category = as.factor(Category)) 
+
+
+fig <- plot_ly(data = test2,  x = ~Dim1, y = ~Dim2, z = ~Dim3, text = test2$Drugbank, 
+               color = ~Category, colors = c('#FF0900', '#B8B8B8'),
+               marker = list(size = 3))
+fig
+```
+
+
+Notice that I was removing **Tanic Acid** from the plot because it's a super different compound that gets extremely separated from the rest. In any case, there is a major difference between this plot and the previous one because the cloud of points have a different shape. I don't think this is very important, but we need to have this in mind. 
+
+
+<br><br><br>
+
+
+
+
+
+
+
+

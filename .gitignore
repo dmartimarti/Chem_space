@@ -1,0 +1,15 @@
+.Rproj.user
+.here
+.RData
+.Rhistory
+__packages
+.rdb
+.woff
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# other folders
+./Data_drug_bacteria_gene_mapping
+./zimmerman_code_MATLAB
