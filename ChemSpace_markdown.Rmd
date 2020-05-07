@@ -12,7 +12,7 @@ knit: (function(input_file, encoding) {
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 ```{r message=FALSE, warning=FALSE}
@@ -23,7 +23,6 @@ library(FactoMineR) # for PCA
 library(factoextra) # for PCA
 library(here) # usefull to save plots in folders given a root
 library(viridis) # color palette package
-# library(ComplexHeatmap) # yeah, complex heatmaps
 library(plotly)
 ```
 
@@ -90,7 +89,8 @@ fig
 ```
 
 
-In order to try to complete our dataset with more drugs, I've extracted the KEGG IDs from the biolog table, passed them into a website that converts them into PubChem IDs, and got the chemical fingerprints using an adapted version of the Python script available at their GitHub repository. 
+In order to try to complete our dataset with more drugs, I've extracted the KEGG IDs from the biolog table, passed them into a website that converts them into PubChem IDs, and got the chemical fingerprints using an adapted version of the Python script available at their GitHub repository.  
+This way, I've been able to get over a **100 new compounds** from biolog that were not in the original data table, but there are still ~70 compounds that need to be added. And also **metformin**!! Probably will be a good idea to put a label to metformin to see where it falls. 
 
 ```{r message=FALSE, warning=FALSE}
 # first, separate KEGG ids to generate a new column to the biolog data frame with pubchem ids
@@ -140,8 +140,9 @@ complete = bind_rows(drugbank, biolog_metabolites_PubChem)
 write.csv(complete, 'Complete_chem_fingerprints.csv')
 ```
 
+With the new data, let's proceed with the analysis.
 
-Do the PCA: 
+1. Do the PCA: 
 
 ```{r}
 mat = complete %>% 
@@ -157,7 +158,7 @@ colnames(ind_df) = c('Dim1', 'Dim2', 'Dim3')
 ```
 
 
-And now, plot again:
+2. Plot the data:
 
 ```{r}
 test2 = ind_df %>% tibble 
@@ -176,7 +177,7 @@ fig
 ```
 
 
-Notice that I was removing **Tanic Acid** from the plot because it's a super different compound that gets extremely separated from the rest. In any case, there is a major difference between this plot and the previous one because the cloud of points have a different shape. I don't think this is very important, but we need to have this in mind. 
+Notice that I was removing [**Tanic Acid**](https://pubchem.ncbi.nlm.nih.gov/compound/Tannic-acid) from the plot because it's a super different compound that gets extremely separated from the rest. In any case, there is a major difference between this plot and the previous one because the cloud of points have a different shape. I don't think this is very important, but we need to have this in mind. 
 
 # t-SNE representation
 
