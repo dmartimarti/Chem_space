@@ -2,7 +2,11 @@
 title: "ChemSpace"
 author: "Daniel Martinez"
 date: "06/05/2020"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
 
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
@@ -28,7 +32,9 @@ library(plotly)
 
 
 
-## Some tests with 3D PCA plots and drugbank database
+# Some tests with 3D PCA plots and drugbank database
+
+## Data preparation and testing
 
 I've downloaded the files from the Zimmermann paper from Nature, 2019. They have a big database of 2099 compounds from drugbank to which they run a Python script to extract the *chemical fingerprints*, using them to represent the chemical space via a PCA. 
 
@@ -88,6 +94,7 @@ fig
 
 ```
 
+## New biolog drugs and PCA
 
 In order to try to complete our dataset with more drugs, I've extracted the KEGG IDs from the biolog table, passed them into a website that converts them into PubChem IDs, and got the chemical fingerprints using an adapted version of the Python script available at their GitHub repository.  
 This way, I've been able to get over a **100 new compounds** from biolog that were not in the original data table, but there are still ~70 compounds that need to be added. And also **metformin**!! Probably will be a good idea to put a label to metformin to see where it falls. 
@@ -179,7 +186,9 @@ fig
 
 Notice that I was removing [**Tanic Acid**](https://pubchem.ncbi.nlm.nih.gov/compound/Tannic-acid) from the plot because it's a super different compound that gets extremely separated from the rest. In any case, there is a major difference between this plot and the previous one because the cloud of points have a different shape. I don't think this is very important, but we need to have this in mind. 
 
-# t-SNE representation
+
+
+## t-SNE representation
 
 PCA is a good method to reduce the dimensionality, but it's showing some weird results compared to the original publication. Before testing more things with the PCA parameters and transformations, let's give it a try with the t-SNE method, which in theory is more robust to show non-linear dependencies and better clusters than a PCA. 
 
