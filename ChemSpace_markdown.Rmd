@@ -268,6 +268,127 @@ fig
 ```
 
 
+## NEW! t-SNE Representation
+
+After doing some work looking for IDs in Pubchem by hand, I have finally a list of 234 biolog drugs in the database. Some of them were repeated, and 3 of them are not as Pubchem IDs, but PubChem substances. I will check if I can make the Python script to work with those.
+
+```{r warning=FALSE, echo=FALSE}
+biolog.table = biolog %>% 
+  filter(Plate %in% plates) %>% 
+  select(Metabolite, Plate, KEGG_ID, CAS_ID, PubChem_ID) %>% 
+  unique
+
+# I LOOKED FOR THE MISSING COMPOUNDS AND ADDED THEM
+# ALSO, I ADDED A NEW COLUMN WITH PUBCHEM SUBSTANCE
+# AS 3 COMPOUNDS WERE NOT FOUND IN PUBCHEM
+
+# load AGAIN the file, it has been updated
+biolog_pubchem_IDs = read_csv("biolog_pubchem_IDs.csv")
+
+# store the list of pubchem IDs
+pubchem_IDs = biolog_pubchem_IDs %>% select(PubChem_ID) %>% t %>% as.character 
+
+# store the list of pubchem substances
+pubchem_subs = biolog_pubchem_IDs %>% select(PubChem_Substance) %>% t %>% as.character 
+
+
+# file with chem fingerprints from pubchem compounds (~100 more, not bad)
+biolog_metabolites_PubChem = read_csv("biolog_metabolites_PubChem.csv") %>% select(-X1, -index, -Number_of_carboxylic_acids_1, -ID) %>%
+  rename(PubChem_ID = PUBCHEM_COMPOUND_CID) 
+
+dummy = biolog_pubchem_IDs %>%
+  select(Metabolite, PubChem_ID) %>% unique
+
+biolog_metabolites_PubChem = biolog_metabolites_PubChem %>% left_join(dummy, by = 'PubChem_ID') %>%
+  select(PubChem_ID, Metabolite, everything()) %>% rename(GENERIC_NAME = Metabolite)
+
+# add metformin to the database
+biolog_metabolites_PubChem[biolog_metabolites_PubChem$PubChem_ID == 4091,]$GENERIC_NAME <- 'Metformin'
+
+# add a new category for biolog compounds
+biolog_metabolites_PubChem = biolog_metabolites_PubChem %>% 
+  mutate(Category = 'Biolog')
+
+# bind rows
+complete = bind_rows(drugbank %>% 
+                       mutate(Category = 'Drugbank'), 
+                     biolog_metabolites_PubChem)
+```
+
+```{r}
+mat.tsne = complete %>% 
+  # filter(GENERIC_NAME != 'Tannic acid') %>%
+  # select(-Number_of_carboxylic_acids_1) %>%
+  select(Number_of_aliphatic_carboxylic_acids:Number_of_urea_groups) %>% as.matrix
+rownames(mat.tsne) = complete %>% 
+  # filter(GENERIC_NAME != 'Tannic acid') %>% 
+  select(GENERIC_NAME) %>% t %>% as.character
+
+tsne = Rtsne(mat.tsne, check_duplicates = FALSE, pca = FALSE, num_threads = 12,
+             normalize = FALSE, max_iter = 5000,
+             perplexity = 40, theta = 0.2, dims = 3) 
+
+```
+
+
+And, plot!
+
+```{r message=FALSE, warning=FALSE}
+# generate data frame from tnse results
+tsne.df = data.frame(tsne$Y)
+colnames(tsne.df) = c('Dim1', 'Dim2', 'Dim3')
+
+tsne.df['Drugbank'] = complete %>% 
+  # filter(GENERIC_NAME != 'Tannic acid') %>% 
+  select(GENERIC_NAME) %>% t %>% as.character
+
+
+tsne.df = tsne.df %>%
+  mutate(biolog = ifelse(Drugbank %in% drugs, Drugbank, NA),
+         Category = ifelse(Drugbank %in% drugs, 'Biolog', 'Drugbank'),
+         Category = ifelse(Drugbank == 'Metformin', 'Metformin', Category),
+         Category = as.factor(Category)) 
+
+
+# let's try to modify the opacity of grey points
+fig = plot_ly() 
+
+fig = fig %>%
+  add_trace(
+    data = tsne.df %>% filter(Category == 'Drugbank'),
+    name = 'Drugbank',
+    x = ~Dim1, y = ~Dim2, z = ~Dim3, text = tsne.df[tsne.df$Category == 'Drugbank',]$Drugbank, 
+    marker = list(
+      color = '#B8B8B8', 
+      opacity = 0.4, # OPACITY
+      size = 4)
+  )
+
+fig = fig %>%
+  add_trace(
+    data = tsne.df %>% filter(Category == 'Biolog'),
+    name = 'Biolog',
+    x = ~Dim1, y = ~Dim2, z = ~Dim3, text = tsne.df[tsne.df$Category == 'Biolog',]$Drugbank, 
+    marker = list(
+      color = '#FF0900', 
+      size = 4)
+  )
+
+fig = fig %>%
+  add_trace(
+    data = tsne.df %>% filter(Category == 'Metformin'),
+    name = 'Metformin',
+    x = ~Dim1, y = ~Dim2, z = ~Dim3, text = tsne.df[tsne.df$Category == 'Metformin',]$Drugbank, 
+    marker = list(
+      color = '#3E4AFF', 
+      size = 6)
+  )
+
+
+fig
+```
+
+
 <br><br><br>
 
 

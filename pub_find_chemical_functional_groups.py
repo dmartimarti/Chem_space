@@ -18,7 +18,7 @@ import pubchempy as pcp
 from rdkit.Chem import Fragments
 
 # input drug file in sdf format
-sdfFile = 'Metab_structures_missing_biolog.sdf'
+sdfFile = 'pubchem_IDs.sdf'
 # output file with functional groups per drug
 outFileFunctionalGroups = 'biolog_metabolites_PubChem.csv'
 

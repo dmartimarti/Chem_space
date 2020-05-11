@@ -1,0 +1,139 @@
+347910415
+  -OEChem-05112012522D
+
+  0  0  0     0  0  0  0  0  0999 V2000
+M  END
+> <PUBCHEM_SUBSTANCE_ID>
+347910415
+
+> <PUBCHEM_SUBSTANCE_VERSION>
+2
+
+> <PUBCHEM_EXT_DATASOURCE_NAME>
+DrugBank
+
+> <PUBCHEM_EXT_DATASOURCE_REGID>
+DB09141
+
+> <PUBCHEM_SUBSTANCE_SYNONYM>
+Protamine sulfate
+DB09141
+
+> <PUBCHEM_XREF_EXT_ID>
+DB09141
+
+> <PUBCHEM_PUBMED_ID>
+8268631
+12440613
+24019031
+27223896
+
+> <PUBCHEM_EXT_DATASOURCE_URL>
+https://www.drugbank.ca
+
+> <PUBCHEM_EXT_SUBSTANCE_URL>
+https://www.drugbank.ca/drugs/DB09141
+
+$$$$
+24895091
+  -OEChem-05112012522D
+
+ 11 10  0     1  0  0  0  0  0999 V2000
+   -1.4612    1.2635    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.1748   -0.2688    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5314    1.2635    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+    2.1748    0.2688    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+    1.2450   -0.2688    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.9638   -1.2635    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.9638   -0.1421    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+   -1.4612    0.1452    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.4665    0.1452    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5314    0.1452    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0340   -0.1421    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+  1  8  2  0  0  0  0
+  2  8  1  0  0  0  0
+  3 10  2  0  0  0  0
+  4  5  1  0  0  0  0
+  5 10  1  0  0  0  0
+  6  7  1  0  0  0  0
+  7  8  1  0  0  0  0
+  7  9  1  0  0  0  0
+  9 11  1  0  0  0  0
+ 10 11  1  0  0  0  0
+M  END
+> <PUBCHEM_COMPOUND_ID_TYPE>
+0
+
+> <PUBCHEM_TOTAL_CHARGE>
+0
+
+> <PUBCHEM_SUBSTANCE_ID>
+24895091
+
+> <PUBCHEM_SUBSTANCE_VERSION>
+6
+
+> <PUBCHEM_EXT_DATASOURCE_NAME>
+Sigma-Aldrich
+
+> <PUBCHEM_EXT_DATASOURCE_REGID>
+G2253_SIGMA
+
+> <PUBCHEM_SUBSTANCE_SYNONYM>
+L-Glutamic acid gamma-monohydroxamate
+
+> <PUBCHEM_XREF_EXT_ID>
+G2253_SIGMA
+
+> <PUBCHEM_EXT_DATASOURCE_URL>
+http://www.sigmaaldrich.com
+
+> <PUBCHEM_EXT_SUBSTANCE_URL>
+https://www.sigmaaldrich.com/catalog/product/sigma/g2253?utm_source=pubchem&utm_campaign=pubchem_2017&utm_medium=referral
+
+> <PUBCHEM_CID_ASSOCIATIONS>
+3484  1
+
+> <PUBCHEM_COORDINATE_TYPE>
+1
+3
+
+$$$$
+603444
+  -OEChem-05112012522D
+
+  0  0  0     0  0  0  0  0  0999 V2000
+M  END
+> <PUBCHEM_SUBSTANCE_ID>
+603444
+
+> <PUBCHEM_SUBSTANCE_VERSION>
+4
+
+> <PUBCHEM_EXT_DATASOURCE_NAME>
+NIAID
+
+> <PUBCHEM_EXT_DATASOURCE_REGID>
+008699
+
+> <PUBCHEM_SUBSTANCE_COMMENT>
+NIAID ChemDB HIV, Opportunistic Infections and Tuberculosis Therapeutics Database
+STRUCTURE NOT AVAILABLE.
+
+> <PUBCHEM_SUBSTANCE_SYNONYM>
+Compound 48/80
+Condensation product of N-methyl-p-methoxyphenethylamine with formaldehyde
+
+> <PUBCHEM_XREF_EXT_ID>
+008699
+
+> <PUBCHEM_PUBMED_ID>
+2176818
+
+> <PUBCHEM_EXT_DATASOURCE_URL>
+http://chemdb.niaid.nih.gov
+
+> <PUBCHEM_EXT_SUBSTANCE_URL>
+http://chemdb.niaid.nih.gov/CompoundDetails.aspx?AIDSNO=008699
+
+$$$$
