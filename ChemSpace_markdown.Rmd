@@ -1,7 +1,7 @@
 ---
 title: "ChemSpace"
 author: "Daniel Martinez"
-date: "06/05/2020"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document:
     toc: true
@@ -16,7 +16,7 @@ knit: (function(input_file, encoding) {
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = F)
 ```
 
 ```{r message=FALSE, warning=FALSE}
@@ -141,7 +141,8 @@ biolog_metabolites_PubChem = biolog_metabolites_PubChem %>% left_join(dummy, by 
 
 
 # bind rows
-complete = bind_rows(drugbank, biolog_metabolites_PubChem)
+complete = bind_rows(drugbank, biolog_metabolites_PubChem) %>% 
+  distinct(GENERIC_NAME, .keep_all = TRUE)
 
 # save data table into csv
 write.csv(complete, 'Complete_chem_fingerprints.csv')
