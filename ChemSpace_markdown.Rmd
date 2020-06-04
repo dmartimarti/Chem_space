@@ -408,8 +408,7 @@ After doing the analysis of synergy scores with SynergyFinder, we can now colour
 
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 4
@@ -421,8 +420,8 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
 
 
 
@@ -511,11 +510,9 @@ So, if we play with different thresholds, we can see how it affects the chemical
 
 ```{r cutoff2, message=FALSE, warning=FALSE, echo=FALSE}
 
-
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 2
@@ -527,8 +524,8 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
 
 
 bliss.tsne %>%
@@ -629,11 +626,9 @@ fig
 
 ```{r cutoff3, echo=FALSE, warning=FALSE, message=FALSE}
 
-
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 3
@@ -645,8 +640,9 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
+
 
 
 bliss.tsne %>%
@@ -746,12 +742,9 @@ fig
 ### Cut-off = 5
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-
-
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 5
@@ -763,8 +756,9 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
+
 
 
 bliss.tsne %>%
@@ -866,12 +860,9 @@ fig
 ### Cut-off = 6
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-
-
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 6
@@ -883,8 +874,9 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
+
 
 
 bliss.tsne %>%
@@ -984,12 +976,9 @@ fig
 ### Cut-off = 7
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-
-
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 7
@@ -1001,8 +990,9 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
+
 
 
 bliss.tsne %>%
@@ -1103,12 +1093,9 @@ fig
 ### Cut-off = 8
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-
-
 bliss = read_csv('D:/MRC_Postdoc/Pangenomic/biolog/Biolog_metf_40_60/summary/Bliss_scores_corrected.csv')
 
-bliss = bliss %>% 
-  mutate(Drug.combination = substr(Drug.combination, 1, nchar(Drug.combination) - 6)) 
+bliss = bliss %>% separate(Drug.combination, c('Drug', 'Plate'), sep = '_')
 
 # initiate the threshold
 thrs = 8
@@ -1120,8 +1107,9 @@ bliss.tsne = bliss %>%
          CI_up = abs(Synergy.score) + abs(CI),
          Direction = ifelse(CI_low > thrs & Synergy.score < 0, 'Antagonistic', 
                             ifelse(CI_low > thrs & Synergy.score > 0, 'Synergistic', 'Neutral')),
-         Drug.combination = fct_reorder(Drug.combination, desc(Synergy.score))) %>%
-  rename(Drugbank = Drug.combination)
+         Drug = fct_reorder(Drug, desc(Synergy.score))) %>%
+  rename(Drugbank = Drug)
+
 
 
 bliss.tsne %>%
