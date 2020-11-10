@@ -1,0 +1,2 @@
+Task,Mean cross_entropy,Standard deviation cross_entropy,Fold 0 cross_entropy,Fold 1 cross_entropy,Fold 2 cross_entropy,Fold 3 cross_entropy,Fold 4 cross_entropy,Fold 5 cross_entropy,Fold 6 cross_entropy,Fold 7 cross_entropy,Fold 8 cross_entropy,Fold 9 cross_entropy
+class,1.0497004273088653,0.15080243332063353,0.8687370839601017,0.9468350917134628,1.0140267382568044,1.0357231486516647,1.3953075066461,0.9357533758946026,0.9514981640943786,1.249097367330022,1.0698314547445447,1.0301943417969717
