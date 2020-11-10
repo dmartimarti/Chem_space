@@ -5,6 +5,8 @@
 __packages
 .rdb
 .woff
+events.out.tfevents*
+model.pt
 
 # knitr and R markdown default cache directories
 *_cache/
