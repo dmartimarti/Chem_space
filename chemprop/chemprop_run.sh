@@ -21,7 +21,7 @@ tensorboard --logdir=biolog_model_test
 # hyperparameters optimization
 chemprop_hyperopt --data_path chemprop_class.csv --dataset_type multiclass --num_iters 10 --split_type cv --config_save_path hyperopt_multiclass.json --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0
 # training
-chemprop_train --data_path chemprop_class.csv --dataset_type multiclass --save_dir biolog_model_multiclass --split_type cv --num_folds 5 --ensemble_size 10 --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --config_path hyperopt_multiclass.json
+chemprop_train --data_path chemprop_class.csv --dataset_type multiclass --save_dir biolog_model_multiclass  --num_folds 10 --ensemble_size 20 --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --config_path hyperopt_multiclass.json
 # prediction
 chemprop_predict --test_path predict.csv --checkpoint_dir biolog_model_multiclass --preds_path predictions_multiclass.csv --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0
 # interpretation
