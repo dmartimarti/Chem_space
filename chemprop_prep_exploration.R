@@ -102,6 +102,10 @@ pred_mc %>% view
 
 
 
+# read multi-class results extended for 
+
+
+
 # something weird is happening, how can I lose ~300 compound names?
 pred_mc %>% drop_na(GENERIC_NAME)
 
@@ -148,6 +152,18 @@ rep_drugs %>%
   select(smiles) %>% 
   drop_na(smiles) %>% 
   write_csv(here('chemprop', file = 'predict_drug_rep_hub.csv'))
+
+
+# read multi-class results extended for drug rep hub
+
+pred_hub = read_csv("chemprop/multiclass_thr.4/predictions_drug_rep_hub_multiclass.csv") %>% 
+  drop_na(smiles)
+
+pred_hub = pred_hub %>% 
+  separate(class_class_0, sep = ', ', into = c('neutral', 'antagonistic', 'synergy')) %>%  # 0:neutral, 1:antagonistic, 2:synergy
+  left_join(rep_drugs) 
+
+pred_hub
 
 
 
