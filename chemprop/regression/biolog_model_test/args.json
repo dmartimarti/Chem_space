@@ -14,19 +14,19 @@
     "checkpoint_path": null,
     "checkpoint_paths": null,
     "class_balance": false,
-    "config_path": "hyperopt_multiclass.json",
+    "config_path": "./regression/hyperopt.json",
     "crossval_index_dir": null,
     "crossval_index_file": null,
     "crossval_index_sets": null,
     "cuda": true,
-    "data_path": "chemprop_class.csv",
-    "dataset_type": "multiclass",
+    "data_path": "chemprop.csv",
+    "dataset_type": "regression",
     "depth": 3,
     "device": {
         "_type": "python_object (type = device)",
         "_value": "gASVIQAAAAAAAACMBXRvcmNolIwGZGV2aWNllJOUjARjdWRhlEsAhpRSlC4="
     },
-    "dropout": 0.15000000000000002,
+    "dropout": 0.4,
     "ensemble_size": 20,
     "epochs": 30,
     "extra_metrics": [],
@@ -37,21 +37,21 @@
     "features_path": null,
     "features_scaling": false,
     "features_size": null,
-    "ffn_hidden_size": 1400,
-    "ffn_num_layers": 1,
+    "ffn_hidden_size": 1300,
+    "ffn_num_layers": 2,
     "final_lr": 0.0001,
     "folds_file": null,
     "gpu": 0,
     "grad_clip": null,
-    "hidden_size": 1400,
+    "hidden_size": 1300,
     "ignore_columns": null,
     "init_lr": 0.0001,
     "log_frequency": 10,
     "max_data_size": null,
     "max_lr": 0.001,
-    "metric": "cross_entropy",
+    "metric": "rmse",
     "metrics": [
-        "cross_entropy"
+        "rmse"
     ],
     "minimize_score": true,
     "mpn_shared": false,
@@ -67,13 +67,13 @@
     "pytorch_seed": 0,
     "quiet": false,
     "reproducibility": {
-        "command_line": "python /home/dani/anaconda3/envs/chemprop/bin/chemprop_train --data_path chemprop_class.csv --dataset_type multiclass --save_dir biolog_model_multiclass --num_folds 10 --ensemble_size 20 --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --config_path hyperopt_multiclass.json",
+        "command_line": "python /home/dani/anaconda3/envs/chemprop/bin/chemprop_train --data_path chemprop.csv --dataset_type regression --save_dir ./regression/biolog_model_test --num_folds 10 --split_type cv --ensemble_size 20 --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --config_path ./regression/hyperopt.json",
         "git_has_uncommitted_changes": true,
         "git_root": "/home/dani/Documents/MRC_postdoc/Pangenomic/Chem_space",
         "git_url": "https://github.com/dmartimarti/Chem_space/tree/58d704c41d6b7de8fdbeb40c9ef8e30c50ad3866",
-        "time": "Tue Nov 17 10:42:58 2020"
+        "time": "Tue Nov 17 11:55:21 2020"
     },
-    "save_dir": "biolog_model_multiclass",
+    "save_dir": "./regression/biolog_model_test",
     "save_preds": false,
     "save_smiles_splits": false,
     "seed": 0,
@@ -93,10 +93,10 @@
             0.1
         ]
     },
-    "split_type": "random",
+    "split_type": "cv",
     "target_columns": null,
     "task_names": [
-        "class"
+        "synergy"
     ],
     "test": false,
     "test_fold_index": null,
