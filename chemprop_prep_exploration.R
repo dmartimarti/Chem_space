@@ -133,6 +133,13 @@ pred_mc %>%
   facet_wrap(~Class)
 
 
+
+
+
+
+
+
+
 # drug_rep_hub -------------------------------------------------------------------
 
 
@@ -165,6 +172,32 @@ pred_hub = pred_hub %>%
 
 pred_hub
 
+
+
+
+
+
+
+
+# drug_rep_hub regression -------------------------------------------------
+
+
+
+pred_hub_reg = read_csv("chemprop/regression/predictions_drug_rep_hub_reg.csv") %>% 
+  drop_na(smiles)
+
+pred_hub_reg = pred_hub_reg %>% 
+  left_join(rep_drugs) 
+
+# distribution of synergy scores
+pred_hub_reg %>% 
+  ggplot(aes(x = synergy)) +
+  geom_histogram(stat = 'bin')
+
+# distribution of compound mass
+pred_hub_reg %>% 
+  ggplot(aes(x = expected_mass)) +
+  geom_histogram(stat = 'bin')
 
 
 
