@@ -43,3 +43,30 @@ chemprop_hyperopt --data_path chemprop_class.csv --dataset_type multiclass --num
 chemprop_train --data_path chemprop_class.csv --dataset_type multiclass --save_dir biolog_model_multiclass  --num_folds 10 --ensemble_size 20 --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --config_path hyperopt_multiclass.json
 
 chemprop_interpret --data_path predictions_drug_rep_hub_multiclass.csv --checkpoint_dir biolog_model_multiclass/ --features_generator rdkit_2d_normalized --no_features_scaling
+
+
+
+
+
+
+# regression with new file
+
+
+# hyperparameters optimization
+chemprop_hyperopt --data_path chemprop_fixed.csv --dataset_type regression --num_iters 10 --config_save_path ./regression_noisomeric/hyperopt.json --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --split_type cv  --num_folds 10
+# training
+chemprop_train --data_path chemprop_fixed.csv --dataset_type regression --save_dir ./regression_noisomeric/reg_rdkit_2d --num_folds 10 --split_type cv --ensemble_size 20 --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 --config_path ./regression_noisomeric/hyperopt.json
+
+chemprop_predict --test_path predict_drug_rep_hub.csv --checkpoint_dir ./regression_noisomeric/reg_rdkit_2d --preds_path ./regression_noisomeric/predictions_drug_rep_hub_reg.csv --features_generator rdkit_2d_normalized --no_features_scaling --gpu 0 
+
+
+# morgan
+# hyperparameters optimization
+chemprop_hyperopt --data_path chemprop_fixed.csv --dataset_type regression --num_iters 10 --config_save_path ./regression_noisomeric/hyperopt_morgan.json --features_generator morgan  --gpu 0 --split_type cv  --num_folds 10
+# training
+chemprop_train --data_path chemprop_fixed.csv --dataset_type regression --save_dir ./regression_noisomeric/morgan --num_folds 5 --split_type cv --ensemble_size 10 --features_generator morgan  --gpu 0 --config_path ./regression_noisomeric/hyperopt.json
+
+chemprop_predict --test_path predict_drug_rep_hub.csv --checkpoint_dir ./regression_noisomeric/morgan --preds_path ./regression_noisomeric/morgan/predictions_drug_rep_hub_reg_.csv --features_generator morgan --num_workers 12 --gpu 0 
+
+
+chemprop_interpret --data_path ./regression_noisomeric/morgan/predictions_drug_rep_hub_reg_.csv  --checkpoint_dir ./regression_noisomeric/morgan --property_id 1 --features_generator morgan
